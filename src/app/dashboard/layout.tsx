@@ -12,11 +12,13 @@ export default function dashboard_layout({
 
   return (
     <Providers>
-      <div className=' flex justify-between'>
-        <div className=' fixed left-0'>
+      <div className=' '>
+        <div className=' fixed left-0 top-0 '>
             <Sidenav />
         </div>
+        <div className=' '>
           {children}
+        </div>
           <StoreToggle />
       </div>
     </Providers>

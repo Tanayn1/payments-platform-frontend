@@ -19,6 +19,7 @@ export default function Page() {
     const [trialPeriod, setTrialPeriod] = useState<null | number>(null);
     const [amount, setAmount] = useState<null | number>(null);
 
+
     const searchParams = useSearchParams()
     const {
       wrapperProps,

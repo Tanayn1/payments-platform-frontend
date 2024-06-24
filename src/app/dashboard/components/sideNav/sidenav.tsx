@@ -21,15 +21,15 @@ export default function Sidenav() {
       }
     }
   return (
-    <div className='w-[200px] h-screen'>
+    <div className='  w-[200px]  h-screen'>
       <div>
         <div className=' m-5'>
           <h1>TrustFlow</h1>
         </div>
         <div className=' my-8 mt-24 flex flex-col'>
-          <a href="" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm flex items-center gap-1'><HomeIcon className=' h-4 w-4'/>Home</a>
+          <a href="/dashboard" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm flex items-center gap-1'><HomeIcon className=' h-4 w-4'/>Home</a>
           <a href="" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm'>Payments</a>
-          <a href="" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm'>Products</a>
+          <a href="/dashboard/products" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm' >Products</a>
           <a href="" className=' hover:bg-slate-50 mx-2 rounded-lg p-2 text-sm'>Customers</a>
 
         </div>

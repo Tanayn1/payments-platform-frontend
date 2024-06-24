@@ -30,7 +30,7 @@ export default function StoreToggle() {
         handleSetStore();
     },[])
   return (
-    <div className=' m-5 flex items-center gap-3'>
+    <div className=' fixed top-0 right-0 m-5 flex items-center gap-3'>
         <div className=' flex'>
             <h1 className=' mr-2'> Test Mode </h1>
             <Switch defaultChecked disabled className=' focus:outline-none focus:border-none' />
