@@ -24,9 +24,9 @@ export default function Products() {
     },[])
   return (
     <div>
-        <div className=' flex items-center justify-between mt-24 mx-6 '>
+        <div className=' flex items-center  mt-24 mx-6 '>
             <h1 className=' text-3xl font-semibold'>Products</h1>
-            <Button onClick={()=>{setShowCreateProduct(true)}} className=' shadow text-xs h-[25px] '>New Product <PlusIcon className=' ml-2 h-3 w-3 '/></Button>
+            <Button onClick={()=>{setShowCreateProduct(true)}} className=' fixed right-0 mx-6 shadow text-xs h-[25px] '>New Product <PlusIcon className=' ml-2 h-3 w-3 '/></Button>
             <CreateProduct isShow={showCreateProduct} setIsShow={(value: boolean)=>{setShowCreateProduct(value)}}/>
         </div>
             <div className=' border mt-14  border-gray-200 mx-6'></div>
