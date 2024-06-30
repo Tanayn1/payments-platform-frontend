@@ -12,7 +12,6 @@ export async function getStores() {
             }
         })
         const data = await stores.json()
-        console.log(data)
         if (!data || data.length === 0) {
             return { redirect: '/dashboard/createFirstStore' }
         }

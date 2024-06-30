@@ -6,21 +6,17 @@ import { ArrowLeftIcon } from 'lucide-react'
 // @ts-ignore
 import { usePaymentInputs } from 'react-payment-inputs';
 import images from 'react-payment-inputs/images';
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import DisplayProducts from '@/app/checkout/components/displayProducts'
+import { PriceIdObject, ProductObject } from '@/types/types'
 
 interface PaymentFormPreview {
-  amount: number,
-  type: string,
-  billingPeriod: string,
-  freeTrial: boolean,
-  freeTrialDays: number,
-  products: Array<any>,
-  testMode: Boolean,
+  priceObject: Array<PriceIdObject>,
+  productArray: Array<ProductObject>
 
 }
 
-export default function PaymentFormPreview({ amount, type, billingPeriod }: PaymentFormPreview) {
+export default function PaymentFormPreview({ priceObject, productArray }: PaymentFormPreview) {
   const {
     wrapperProps,
     getCardImageProps,
@@ -28,6 +24,22 @@ export default function PaymentFormPreview({ amount, type, billingPeriod }: Paym
     getExpiryDateProps,
     getCVCProps
   } = usePaymentInputs();
+  const [total, setTotal] = useState<null | number>(null)
+
+  const getTotal = ()=>{
+    let sum = 0;
+
+    for (let obj of priceObject) {
+      sum += obj.price;
+    }
+    setTotal(sum)
+
+    }
+  
+
+  useEffect(()=>{
+    getTotal()
+  },[priceObject])
 
   return (
     <div className="flex justify-center items-center min-h-screen ">
@@ -37,11 +49,13 @@ export default function PaymentFormPreview({ amount, type, billingPeriod }: Paym
             <a href=""><ArrowLeftIcon /></a>
           </div>
           <div className="mb-10">
-            <h1 className="text-4xl font-semibold">${amount} <span className="text-xs text-gray-400 font-normal">per {billingPeriod === 'Monthly' ? 'Month' : billingPeriod === 'Yearly' ? 'Year' : 'Week'}</span></h1>
-            <h1 className="text-lg mt-2 text-gray-500">{type === 'subscription' ? `Subscribe To Clippify Pro` : `Amount Due To Clippify Pro`}</h1>
+            <h1 className="text-4xl font-semibold">
+              ${total}
+            <span className="text-xs text-gray-400 font-normal">per {priceObject[0]?.billingPeriod === 'Monthly' ? 'Month' : priceObject[0]?.billingPeriod === 'Yearly' ? 'Year' : 'Week'}</span></h1>
+            <h1 className="text-lg mt-2 text-gray-500">{priceObject[0]?.priceType === 'recurring' ? `Subscribe To ${productArray[0]?.name}` : `Amount Due To ${productArray[0]?.name}`}</h1>
           </div>
           <div>
-            {type === 'subscription' ? <DisplaySubscription price={amount} description='Access To All Paid Features 300 credits per month, unlimited generations.' billingPeriod={billingPeriod} /> : <DisplayProducts />}
+            {priceObject[0]?.priceType === 'recurring' ? <DisplaySubscription priceObjectArray={priceObject} productArray={productArray}  total={total!}  /> : <DisplayProducts />}
           </div>
         </div>
 
@@ -72,7 +86,7 @@ export default function PaymentFormPreview({ amount, type, billingPeriod }: Paym
                 <Input disabled placeholder='Full Name On Card' className='shadow focus:outline-none w-[200px] h-[30px] text-xs' />
               </div>
             </div>
-            <Button disabled className='mt-6 w-[200px] h-[30px] text-xs'>{type === 'subscription' ? `Subscribe $${amount}` : 'Checkout'}</Button>
+            <Button disabled className='mt-6 w-[200px] h-[30px] text-xs'>{priceObject[0]?.priceType === 'recurring' ? `Subscribe $${priceObject[0].price}` : 'Checkout'}</Button>
             <div className='flex flex-col items-center mt-7'>
               <h1 className='text-xs text-gray-400'>Powered By <span className='font-bold'>Trustflow</span> | Terms Privacy </h1>
             </div>

@@ -61,7 +61,7 @@ export function ComboboxDemo({stores, setStore, store} : Combobox) {
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-[150px] h-[34px] text-sm text-gray-600  justify-between"
         >
           {value
             ? <div className=" flex gap-3 items-center"><StoreIcon className=" h-5 w-5"/> {value}</div> 

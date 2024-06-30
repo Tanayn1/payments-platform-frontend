@@ -30,7 +30,6 @@ export async function checkUser() {
             }
        })
         const user = await response.json()
-        console.log(user)
         if (user.error) {
             console.log('there is error')
             return {redirect: '/auth/login'}

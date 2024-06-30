@@ -7,20 +7,20 @@ import React, { useEffect, useState } from 'react'
 interface ExtraPricingEdit {
     isShow: boolean,
     setIsShow: Function,
-    addPrice: Function,
-    productType: string,
-    price: string,
-    billingPeriod: string | null,
-    productDescription: string | null
+    EditPrice: Function,
+    oldProductType: string,
+    oldPrice: number,
+    oldBillingPeriod: string | null | undefined,
+    oldProductDescription: string | null | undefined
 }
 
-export default function ExtraPricingEdit({ isShow, setIsShow, addPrice} : ExtraPricingEdit) {
+export default function ExtraPricingEdit({ isShow, setIsShow, EditPrice, oldPrice, oldProductType, oldBillingPeriod, oldProductDescription } : ExtraPricingEdit) {
     const [productType, setProductType] = useState<null | string>(null);
     const [price, setPrice] = useState<null | number>(null);
     const [billingPeriod, setBillingPeriod] = useState<string | null>('weekly');
-    const [productDescription, setProductDescription] = useState<null | string>(null)
+    const [productDescription, setProductDescription] = useState<null | string | undefined>(null)
 
-    const handleAddPrice = ()=>{
+    const handleEditPrice = ()=>{
         if (productType === 'one_off') {
             if (price) {
                 const priceObj = {
@@ -29,7 +29,7 @@ export default function ExtraPricingEdit({ isShow, setIsShow, addPrice} : ExtraP
                     priceDescription: productDescription
                 }
 
-                addPrice(priceObj)
+                EditPrice(priceObj)
                 setIsShow(false)
             } else {
                 //alert
@@ -43,7 +43,7 @@ export default function ExtraPricingEdit({ isShow, setIsShow, addPrice} : ExtraP
                     priceDescription: productDescription
                 }
 
-                addPrice(priceObj)
+                EditPrice(priceObj)
                 setIsShow(false)
             } else {
                 //alert 
@@ -53,10 +53,10 @@ export default function ExtraPricingEdit({ isShow, setIsShow, addPrice} : ExtraP
     }
 
     useEffect(()=>{
-        setProductType(null);
-        setPrice(null);
-        setBillingPeriod('weekly');
-        setProductDescription(null);
+        setProductType(oldProductType);
+        setPrice(oldPrice);
+        setBillingPeriod(oldBillingPeriod ? oldBillingPeriod : 'weekly');
+        setProductDescription(oldProductDescription);
     },[])
 
   return (
@@ -102,7 +102,7 @@ export default function ExtraPricingEdit({ isShow, setIsShow, addPrice} : ExtraP
             </div>
             <div className=' flex items-center justify-between mx-6 mt-7'>
                 <Button onClick={()=>{setIsShow(false)}} variant={'outline'} className=' shadow h-[28px] text-xs'>Back</Button>
-                <Button onClick={handleAddPrice} className=' shadow h-[28px] text-xs'>Add Price</Button>
+                <Button onClick={handleEditPrice} className=' shadow h-[28px] text-xs'>Edit Price</Button>
             </div>
 
     </div>

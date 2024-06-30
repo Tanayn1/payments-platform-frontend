@@ -15,7 +15,15 @@ export default function ExtraPricing({ isShow, setIsShow, addPrice} : ExtraPrici
     const [productType, setProductType] = useState<null | string>(null);
     const [price, setPrice] = useState<null | number>(null);
     const [billingPeriod, setBillingPeriod] = useState<string>('weekly');
-    const [productDescription, setProductDescription] = useState<null | string>(null)
+    const [productDescription, setProductDescription] = useState<null | string>(null);
+
+    const handleClose = ()=>{
+            setProductType(null);
+            setPrice(null);
+            setBillingPeriod('weekly');
+            setProductDescription(null);
+            setIsShow(false)
+    }
 
     const handleAddPrice = ()=>{
         if (productType === 'one_off') {
@@ -23,10 +31,16 @@ export default function ExtraPricing({ isShow, setIsShow, addPrice} : ExtraPrici
                 const priceObj = {
                     price: price,
                     billingPeriod: null,
-                    priceDescription: productDescription
+                    priceDescription: productDescription,
+                    productType: productType
+
                 }
 
                 addPrice(priceObj)
+                setProductType(null);
+                setPrice(null);
+                setBillingPeriod('weekly');
+                setProductDescription(null);
                 setIsShow(false)
             } else {
                 //alert
@@ -37,10 +51,15 @@ export default function ExtraPricing({ isShow, setIsShow, addPrice} : ExtraPrici
                 const priceObj = {
                     price: price,
                     billingPeriod: billingPeriod,
-                    priceDescription: productDescription
+                    priceDescription: productDescription,
+                    productType: productType
                 }
 
                 addPrice(priceObj)
+                setProductType(null);
+                setPrice(null);
+                setBillingPeriod('weekly');
+                setProductDescription(null);
                 setIsShow(false)
             } else {
                 //alert 
@@ -49,18 +68,14 @@ export default function ExtraPricing({ isShow, setIsShow, addPrice} : ExtraPrici
         }
     }
 
-    useEffect(()=>{
-        setProductType(null);
-        setPrice(null);
-        setBillingPeriod('weekly');
-        setProductDescription(null);
-    },[])
+
+
 
   return (
     <div className={`fixed  inset-y-0 right-0 transform ${isShow ? 'translate-x-0' : 'translate-x-full'} transition-transform duration-300 ease-in-out bg-white  shadow-2xl rounded-l-lg  w-[490px] z-50`}>
         <div className=' relative'>
             <div className=' fixed  top-0 right-0 '>
-                <button className=' m-7' onClick={()=>{setIsShow(false)}}><XIcon/></button>
+                <button className=' m-7' onClick={handleClose}><XIcon/></button>
             </div>
             <div className=' fixed left-0 top-0'>
                 <h1 className=' m-7 text-xl font-semibold'>Add price</h1>
@@ -98,7 +113,7 @@ export default function ExtraPricing({ isShow, setIsShow, addPrice} : ExtraPrici
                 </select>
             </div>
             <div className=' flex items-center justify-between mx-6 mt-7'>
-                <Button onClick={()=>{setIsShow(false)}} variant={'outline'} className=' shadow h-[28px] text-xs'>Back</Button>
+                <Button onClick={handleClose} variant={'outline'} className=' shadow h-[28px] text-xs'>Back</Button>
                 <Button onClick={handleAddPrice} className=' shadow h-[28px] text-xs'>Add Price</Button>
             </div>
 

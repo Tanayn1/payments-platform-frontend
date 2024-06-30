@@ -6,32 +6,93 @@ import { PlusIcon, Settings, XIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { BsThreeDots } from "react-icons/bs";
 import ExtraPricing from './extraPrcing'
+import { OptionsDropdown } from './optionsDropdown'
+import ExtraPricingEdit from './extraPricingEdit'
+import Prices from './prices'
+import { createProductServer } from '../actions'
+import { useStore } from '../../components/providers'
 
 interface CreateProduct {
     isShow: boolean,
     setIsShow: Function,
+    refreshProducts: Function
     //productId: string | undefined
 }
 
 interface PricingObject {
     price: number,
     billingPeriod: string | undefined | null,
-    priceDescription: string | undefined | null 
+    priceDescription: string | undefined | null,
+    productType: string
 
 }
 
-export default function CreateProduct({isShow, setIsShow} : CreateProduct) {
+export default function CreateProduct({isShow, setIsShow, refreshProducts} : CreateProduct) {
     const [name, setName] = useState<null | string>(null);
     const [description, setDescription] = useState<null | string>(null);
     const [productType, setProductType] = useState<null | string>(null);
     const [price, setPrice] = useState<null | number>(null);
     const [prices, setPrices] = useState<Array<PricingObject>>([])
     const [billingPeriod, setBillingPeriod] = useState<string>('weekly');
-    const [showExtraPricing, setShowExtraPricing] = useState<boolean>(false)
+    const [showExtraPricing, setShowExtraPricing] = useState<boolean>(false);
+    const [showExtraPricingEdit, setShowExtraPricingEdit] = useState<boolean>(false);
+    const {storeId, setStore} : any = useStore()
+
+
 
     const fetchData = async ()=>{}
 
-    const createProduct = async ()=>{}
+    const createProduct = async (prices: Array<PricingObject>, 
+        price : null | number, description : null | string, 
+        productType: null | string, billingPeriod: string, name : string,  )=>{
+        if (!name && !description) return //alert
+        try {
+            if (prices.length === 0) {
+                if (prices && description && productType) {
+                    const newPricingObj : PricingObject = {
+                        price: price!,
+                        billingPeriod: productType === 'recurring' ? billingPeriod : null,
+                        priceDescription: description,
+                        productType: productType
+                    }
+                    const newPricingArray : Array<PricingObject> = [];
+                    newPricingArray.push(newPricingObj);
+                    //createprodcut
+
+                    await createProductServer(name, description, newPricingArray, storeId);
+                    closeCreateProduct();
+                    refreshProducts()
+                    return;
+                } else {
+                    //alert
+                    return;
+                }
+
+            }
+            //createProduct
+            await createProductServer(name, description, prices, storeId);
+            closeCreateProduct();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const editPrice = ( idx : number,  priceObj : PricingObject)=>{
+        const array = [...prices];
+        console.log(idx, priceObj)
+        array[idx] = priceObj
+        console.log(array)
+        setPrices(array);
+        console.log(prices)
+        
+    }
+
+    const deletePrice = (idx: number)=>{
+        const array = [...prices];
+        array.splice(idx, 1)
+        setPrices(array);
+
+    }
 
     const closeCreateProduct = ()=>{
         //alert
@@ -46,11 +107,12 @@ export default function CreateProduct({isShow, setIsShow} : CreateProduct) {
 
     }
 
-    const addPrice = (price : number, billingPeriod : string | null | undefined, priceDescription : string | undefined | null) => {
+    const addPrice = (price : number, billingPeriod : string | null | undefined, priceDescription : string | undefined | null, productType : string) => {
         const priceObj = {
             price: price,
             billingPeriod: billingPeriod,
-            priceDescription: priceDescription
+            priceDescription: priceDescription,
+            productType: productType
         }
 
         setPrices([...prices, priceObj]);
@@ -119,20 +181,28 @@ export default function CreateProduct({isShow, setIsShow} : CreateProduct) {
                 <div>
                     <h1 className=' text-sm font-medium mx-6 mt-6'>Pricing</h1>
                     <div className=' mx-6'>
-                    {prices.map((price)=>{
+                    {prices.map((price, idx)=>{
                         return (
-                            <div className=' my-3'>
+                            //make this into component
+                            <Prices key={idx} price={price} idx={idx} deletePrice={(value: number)=>{deletePrice(value)}} editPrice={(value: number, newPriceObj : any)=>{editPrice(value, newPriceObj)}}/>
+                            /*<div key={idx} className=' my-3'>
                                 <div className=' flex items-center justify-between'>
                                     <div>
                                         <h1 className=' text-xs'>${price.price}</h1>
                                         <h1 className='text-xs text-gray-500'>{price.billingPeriod === 'weekly' ? 'per week' : price.billingPeriod === 'monthly' ? 'per month' : price.billingPeriod === 'yearly' ? 'per year' : 'One off payment' }</h1>
                                     </div>
                                     <div>
-                                        <Button variant={'outline'} className=' hover:shadow h-[28px] text-xs'><BsThreeDots/></Button>
+                                        <OptionsDropdown setEditDelete={(index : number)=>{deletePrice(index)}} setEditShow={(value: boolean)=>{setShowExtraPricingEdit(value)}} index={idx}/>
                                     </div>
                                 </div>
                                 <div className=' border  border-gray-200 mt-3 '></div>
-                            </div>
+                                <ExtraPricingEdit isShow={showExtraPricingEdit} 
+                                setIsShow={(value : boolean)=>{setShowExtraPricingEdit(value)}} 
+                                oldBillingPeriod={prices[idx].billingPeriod} 
+                                oldProductDescription={prices[idx].priceDescription} 
+                                oldPrice={prices[idx].price} 
+                                oldProductType={prices[idx].productType} EditPrice={(value : PricingObject)=>{}} />
+                            </div>*/
                         )
                     })}
                     <Button onClick={()=>{setShowExtraPricing(true)}} variant={'outline'} className=' shadow h-[28px] w-full text-gray-800 text-xs'>Add More Prices <PlusIcon className=' h-3 w-3 ml-1'/></Button>
@@ -142,10 +212,10 @@ export default function CreateProduct({isShow, setIsShow} : CreateProduct) {
                 }
                 <div className=' flex items-center justify-between mx-6 mt-7'>
                     <Button onClick={closeCreateProduct} variant={'outline'} className=' shadow h-[28px] text-xs'>Back</Button>
-                    <Button className=' shadow h-[28px] text-xs'>Add Product</Button>
+                    <Button onClick={()=>{createProduct(prices, price, description, productType, billingPeriod, name!)}} className=' shadow h-[28px] text-xs'>Add Product</Button>
                 </div>
             </div>
-            <ExtraPricing addPrice={(value : PricingObject)=>{addPrice(value.price,value.billingPeriod,value.priceDescription)}} isShow={showExtraPricing} setIsShow={(value : boolean)=>{setShowExtraPricing(value)}}/> 
+            <ExtraPricing addPrice={(value : PricingObject)=>{addPrice(value.price,value.billingPeriod,value.priceDescription, value.productType)}} isShow={showExtraPricing} setIsShow={(value : boolean)=>{setShowExtraPricing(value)}}/> 
         </aside>
     </div>
   )
